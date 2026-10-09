@@ -1,6 +1,6 @@
 
 import './App.css'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Analytics from './pages/analytics.jsx'
 import Auth from './pages/auth.jsx'
 import Dashboard from './pages/dashboard.jsx'
@@ -18,6 +18,7 @@ function App() {
             <Routes>
 
               <Route path="/" element={<DashboardLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="orders" element={<Orders />} />
