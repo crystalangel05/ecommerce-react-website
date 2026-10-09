@@ -1,3 +1,15 @@
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, } from "recharts";
+
+
+const revenueData = [
+  { month: "Jan", revenue: 1200 },
+  { month: "Feb", revenue: 1800 },
+  { month: "Mar", revenue: 1500 },
+  { month: "Apr", revenue: 2400 },
+  { month: "May", revenue: 2000 },
+  { month: "Jun", revenue: 2800 },
+];
+
 
 export default function Dashboard() {
   return (   
@@ -35,7 +47,31 @@ export default function Dashboard() {
     Products that need restocking
   </span>
     </div>
-  </div>
+  </div>  
+  
+  {/* Revenue overview section */}
+
+  <div className="revenue-section">
+  <h2>Revenue Overview</h2>
+
+  <ResponsiveContainer width="100%" height={300}>
+    <BarChart data={revenueData}>
+      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+
+      <XAxis dataKey="month" />
+
+      <YAxis />
+
+      <Tooltip formatter={(value) => `$${value}`} />
+
+      <Bar
+        dataKey="revenue"
+        fill="#2563eb"
+        radius={[6, 6, 0, 0]}
+      />
+    </BarChart>
+  </ResponsiveContainer>
+</div>
 </div>
    
   )

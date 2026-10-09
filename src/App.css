@@ -247,3 +247,18 @@ body {
     transform: none;
   }
 }
+
+.revenue-section {
+  margin-top: 28px;
+  padding: 24px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.revenue-section h2 {
+  margin: 0 0 24px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
