@@ -128,9 +128,7 @@ body {
   font-weight: 600;
 }
 
-/* =========================
-   DASHBOARD PAGE
-========================= */
+
 
 .dashboard-container {
   width: 100%;
@@ -261,4 +259,91 @@ body {
   font-size: 18px;
   font-weight: 600;
   color: #111827;
+}
+
+
+.recent-orders-section {
+  margin-top: 28px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.recent-orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.recent-orders-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.view-all-orders {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.view-all-orders:hover {
+  text-decoration: underline;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.orders-table th {
+  color: #6b7280;
+  font-weight: 500;
+  background: #f9fafb;
+}
+
+.orders-table td {
+  color: #374151;
+}
+
+.orders-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+.order-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-paid {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-processing {
+  background: #dbeafe;
+  color: #1d4ed8;
 }

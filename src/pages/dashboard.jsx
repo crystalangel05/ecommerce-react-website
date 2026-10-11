@@ -1,5 +1,5 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, } from "recharts";
-
+import OrdersTable from "../components/ordersTable";
 
 const revenueData = [
   { month: "Jan", revenue: 1200 },
@@ -8,6 +8,12 @@ const revenueData = [
   { month: "Apr", revenue: 2400 },
   { month: "May", revenue: 2000 },
   { month: "Jun", revenue: 2800 },
+  { month: "Jul", revenue: 3000 },
+  { month: "Aug", revenue: 3500 },
+  { month: "Sep", revenue: 4000 },
+  { month: "Oct", revenue: 4500 },
+  { month: "Nov", revenue: 5000 },
+  { month: "Dec", revenue: 6000 }
 ];
 
 
@@ -56,7 +62,7 @@ export default function Dashboard() {
 
   <ResponsiveContainer width="100%" height={300}>
     <BarChart data={revenueData}>
-      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+      <CartesianGrid strokeDasharray="3 3" vertical={false} /> 
 
       <XAxis dataKey="month" />
 
@@ -72,6 +78,7 @@ export default function Dashboard() {
     </BarChart>
   </ResponsiveContainer>
 </div>
+<OrdersTable />
 </div>
    
   )
