@@ -1,4 +1,5 @@
 import OrdersTable from "../components/ordersTable.jsx";
+import ordersData from "../data/ordersData";
 
 
 export default function Orders() {
@@ -12,7 +13,8 @@ export default function Orders() {
           + Add Order
         </button>
 
-           <OrdersTable />
+           <OrdersTable  orders={ordersData}
+           title="All Orders"/>
 
     </div>
    

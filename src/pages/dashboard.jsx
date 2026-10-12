@@ -1,5 +1,6 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, } from "recharts";
 import OrdersTable from "../components/ordersTable";
+import ordersData from "../data/ordersData";
 
 const revenueData = [
   { month: "Jan", revenue: 1200 },
@@ -78,7 +79,11 @@ export default function Dashboard() {
     </BarChart>
   </ResponsiveContainer>
 </div>
-<OrdersTable />
+<OrdersTable 
+orders={ordersData.slice (0, 4)}
+title="Recent Orders"
+
+/>
 </div>
    
   )
