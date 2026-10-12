@@ -347,3 +347,46 @@ body {
   background: #dbeafe;
   color: #1d4ed8;
 }
+
+
+.orders-page {
+  width: 100%;
+}
+
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.orders-header h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+  color: #111827;
+}
+
+.orders-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.add-order-button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.add-order-button:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
