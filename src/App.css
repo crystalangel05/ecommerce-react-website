@@ -333,10 +333,12 @@ body {
   font-weight: 600;
 }
 
-.status-paid {
+.status-completed {
   background: #dcfce7;
   color: #166534;
 }
+
+
 
 .status-pending {
   background: #fef3c7;
@@ -390,3 +392,79 @@ body {
   transform: translateY(-2px);
 }
 
+
+.orders-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.orders-controls input,
+.orders-controls select {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+.orders-controls input {
+  flex: 1;
+  min-width: 240px;
+}
+
+
+.orders-controls select {
+  min-width: 170px;
+  cursor: pointer;
+}
+
+
+.orders-controls input:focus,
+.orders-controls select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.orders-controls input::placeholder {
+  color: #9ca3af;
+}
+
+
+.orders-controls select:hover {
+  border-color: #cbd5e1;
+}
+
+
+.status-paid {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-partially-paid {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+
+.recent-orders-section {
+  overflow-x: auto;
+}
+
+.orders-table {
+  width: 100%;
+  min-width: 650px;
+}

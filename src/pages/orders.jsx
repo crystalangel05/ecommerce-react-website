@@ -7,9 +7,10 @@ export default function Orders() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [paymentFilter, setPaymentFilter] = useState("All")
+  const [orderStatusFilter, setOrderStatusFilter] = useState("All");
 
 
-  const filteredOrders = ordersData.filter((order) => {
+ const filteredOrders = ordersData.filter((order) => {
   const search = searchTerm.toLowerCase();
 
   const matchesSearch =
@@ -19,8 +20,13 @@ export default function Orders() {
   const matchesPayment =
     paymentFilter === "All" || order.status === paymentFilter;
 
-  return matchesSearch && matchesPayment;
+  const matchesOrderStatus =
+    orderStatusFilter === "All" ||
+    order.orderStatus === orderStatusFilter;
+
+  return matchesSearch && matchesPayment && matchesOrderStatus;
 });
+
 
 
   return (
@@ -41,6 +47,16 @@ export default function Orders() {
           <option value="Pending">Pending</option>
           <option value="Partially Paid">Partially Paid</option>
         </select>
+        <select
+  value={orderStatusFilter}
+  onChange={(event) => setOrderStatusFilter(event.target.value)}
+>
+  <option value="All">All Order Statuses</option>
+  <option value="Pending">Pending</option>
+  <option value="Processing">Processing</option>
+  <option value="Completed">Completed</option>
+  <option value="Cancelled">Cancelled</option>
+</select>
       </div>
 
       <button className="add-order-button">
