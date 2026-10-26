@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom" 
 
-export default function OrdersTable({ orders = [], title = "Orders", onEditOrder,}) {
+export default function OrdersTable({ orders = [], title = "Orders", onEditOrder, onCancelOrder,}) {
   return (
     <div className="recent-orders-section">
       <div className="recent-orders-header">
@@ -45,13 +45,24 @@ export default function OrdersTable({ orders = [], title = "Orders", onEditOrder
           </span>
         </td>
         <td>
-  <button
-    type="button"
-    className="edit-order-button"
-    onClick={() => onEditOrder(order)}
-  >
-    Edit
-  </button>
+  <div className="order-actions">
+    <button
+      type="button"
+      className="edit-order-button"
+      onClick={() => onEditOrder(order)}
+    >
+      Edit
+    </button>
+
+    <button
+      type="button"
+      className="cancel-order-button"
+      onClick={() => onCancelOrder(order.id)}
+      disabled={order.orderStatus === "Cancelled"}
+    >
+      {order.orderStatus === "Cancelled" ? "Cancelled" : "Cancel"}
+    </button>
+  </div>
 </td>
       </tr>
     ))

@@ -6,6 +6,7 @@ const ordersData = [
     total: 30,
     status: "Paid",
     orderStatus: "Completed",
+    createdAt: "2026-10-05T10:00:00",
   },
   {
     id: "ORD-002",
@@ -13,6 +14,7 @@ const ordersData = [
     total: 10,
     status: "Paid",
     orderStatus: "Processing",
+    createdAt: "2026-09-13T10:00:00",
   },
   {
     id: "ORD-003",
@@ -20,6 +22,7 @@ const ordersData = [
     total: 3,
     status: "Pending",
     orderStatus: "Pending",
+    createdAt: "2026-06-15T10:00:00",
   },
   {
     id: "ORD-004",
@@ -27,6 +30,7 @@ const ordersData = [
     total: 30,
     status: "Paid",
     orderStatus: "Completed",
+    createdAt: "2026-02-19T10:00:00",
   },
   {
     id: "ORD-005",
@@ -34,6 +38,7 @@ const ordersData = [
     total: 45,
     status: "Partially Paid",
     orderStatus: "Processing",
+    createdAt: "2026-03-15T10:00:00",
   },
   {
     id: "ORD-006",
@@ -41,6 +46,7 @@ const ordersData = [
     total: 20,
     status: "Pending",
     orderStatus: "Cancelled",
+    createdAt: "2026-05-16T10:01:00",
   },
 ];
 

@@ -40,6 +40,7 @@ if (!cleanCustomer || !Number.isFinite(numericTotal) || numericTotal <= 0) {
 total: numericTotal,
     status: paymentStatus,
     orderStatus: newOrderStatus,
+    createdAt: new Date().toISOString(),
   };
 
   setOrders((previousOrders) => [...previousOrders, newOrder]);
@@ -95,6 +96,24 @@ const handleUpdateOrder = (event) => {
   setPaymentStatus("Pending");
   setNewOrderStatus("Pending");
   setShowOrderForm(false);
+};
+
+const handleCancelOrder = (orderId) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to cancel this order?"
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  setOrders((previousOrders) =>
+    previousOrders.map((order) =>
+      order.id === orderId
+        ? { ...order, orderStatus: "Cancelled" }
+        : order
+    )
+  );
 };
 
  const filteredOrders = orders.filter((order) => {
@@ -223,7 +242,7 @@ const handleUpdateOrder = (event) => {
   </div>
 )}
 
-       <OrdersTable orders={filteredOrders} title="All Orders" onEditOrder={handleEditOrder}/>
+       <OrdersTable orders={filteredOrders} title="All Orders" onEditOrder={handleEditOrder}  onCancelOrder={handleCancelOrder} />
 
     </div>
    

@@ -1,24 +1,45 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, } from "recharts";
 import OrdersTable from "../components/ordersTable";
 import ordersData from "../data/ordersData";
-
-const revenueData = [
-  { month: "Jan", revenue: 1200 },
-  { month: "Feb", revenue: 1800 },
-  { month: "Mar", revenue: 1500 },
-  { month: "Apr", revenue: 2400 },
-  { month: "May", revenue: 2000 },
-  { month: "Jun", revenue: 2800 },
-  { month: "Jul", revenue: 3000 },
-  { month: "Aug", revenue: 3500 },
-  { month: "Sep", revenue: 4000 },
-  { month: "Oct", revenue: 4500 },
-  { month: "Nov", revenue: 5000 },
-  { month: "Dec", revenue: 6000 }
-];
-
+import { useState } from "react";
 
 export default function Dashboard() {
+
+const [orders] = useState(() => {
+  const savedOrders = localStorage.getItem("orderflow_orders");
+
+  return savedOrders ? JSON.parse(savedOrders) : ordersData;
+});
+
+const revenueData = orders.reduce((months, order) => {
+  if (!order.createdAt || order.orderStatus === "Cancelled") {
+    return months;
+  }
+
+  const date = new Date(order.createdAt);
+
+  if (Number.isNaN(date.getTime())) {
+    return months;
+  }
+
+  const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+  const existingMonth = months.find((item) => item.monthKey === monthKey);
+
+  if (existingMonth) {
+    existingMonth.revenue += Number(order.total || 0);
+  } else {
+    months.push({
+      monthKey,
+      month: date.toLocaleString("en-US", { month: "short" }),
+      revenue: Number(order.total || 0),
+      timestamp: new Date(date.getFullYear(), date.getMonth()).getTime(),
+    });
+  }
+
+  return months;
+}, []).sort((a, b) => a.timestamp - b.timestamp);
+
+
   return (   
 <div className="dashboard-container">
   <div className="dashboard-header">
@@ -26,27 +47,28 @@ export default function Dashboard() {
   <p>Here's what's happening with your business today.</p>
   </div>
   <div className="dashboard-stats">
+    <p className="dashboard-card-value">
+  ${orders
+    .filter((order) => order.orderStatus !== "Cancelled")
+    .reduce((total, order) => total + Number(order.total || 0), 0)
+    .toLocaleString()}
+</p>
     <div className="dashboard-card">
-      <h2>Total Revenue</h2>
-      <p className="dashboard-card-value">$2,500</p>
-      <span className="dashboard-card-description">
-    Revenue from all orders
-  </span>
-    </div>
-    <div className="dashboard-card">
-      <h2>Total Orders</h2>
-      <p className="dashboard-card-value">150</p>
-      <span className="dashboard-card-description">
+  <h2>Total Orders</h2>
+  <p className="dashboard-card-value">{orders.length}</p>
+  <span className="dashboard-card-description">
     Orders received so far
   </span>
-    </div>
+</div>
     <div className="dashboard-card">
-      <h2>Pending Orders</h2>
-      <p className="dashboard-card-value">75</p>
-      <span className="dashboard-card-description">
+  <h2>Pending Orders</h2>
+  <p className="dashboard-card-value">
+    {orders.filter((order) => order.orderStatus === "Pending").length}
+  </p>
+  <span className="dashboard-card-description">
     Orders awaiting completion
   </span>
-    </div>
+</div>
     <div className="dashboard-card">
       <h2>Low Stock Products</h2>
       <p className="dashboard-card-value">15</p>
@@ -79,10 +101,9 @@ export default function Dashboard() {
     </BarChart>
   </ResponsiveContainer>
 </div>
-<OrdersTable 
-orders={ordersData.slice (0, 4)}
-title="Recent Orders"
-
+<OrdersTable
+  orders={orders.slice(-5).reverse()}
+  title="Recent Orders"
 />
 </div>
    
