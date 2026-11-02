@@ -42,38 +42,35 @@ useEffect(() => {
     (order) => order.orderStatus === "Pending"
   ).length;
 
-const monthlyRevenue = orders.reduce((months, order) => {
-  if (!order.createdAt || order.orderStatus === "Cancelled") {
-    return months;
-  }
+const monthlyRevenue = (() => {
+  const currentYear = new Date().getFullYear();
 
-  const date = new Date(order.createdAt);
-  if (Number.isNaN(date.getTime())) {
-    return months;
-  }
+  const months = Array.from({ length: 12 }, (_, index) => ({
+    monthKey: `${currentYear}-${index}`,
+    month: new Date(currentYear, index).toLocaleString("en-US", {
+      month: "short",
+    }),
+    revenue: 0,
+  }));
 
-  const month = date.toLocaleString("en-US", { month: "short" });
-  const year = date.getFullYear();
-  const monthKey = `${year}-${date.getMonth()}`;
+  orders.forEach((order) => {
+    if (!order.createdAt || order.orderStatus === "Cancelled") {
+      return;
+    }
 
-  const existingMonth = months.find((item) => item.monthKey === monthKey);
+    const date = new Date(order.createdAt);
 
-  if (existingMonth) {
-    existingMonth.revenue += Number(order.total || 0);
-  } else {
-    months.push({
-      monthKey,
-      month: `${month} ${year}`,
-      revenue: Number(order.total || 0),
-    });
-  }
+    if (Number.isNaN(date.getTime()) || date.getFullYear() !== currentYear) {
+      return;
+    }
+
+    const monthIndex = date.getMonth();
+
+    months[monthIndex].revenue += Number(order.total) || 0;
+  });
 
   return months;
-}, []).sort((a, b) => {
-  const [yearA, monthA] = a.monthKey.split("-").map(Number);
-  const [yearB, monthB] = b.monthKey.split("-").map(Number);
-  return yearA - yearB || monthA - monthB;
-});
+})(); 
 
 
   const orderStatusData = [

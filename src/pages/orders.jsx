@@ -20,6 +20,22 @@ const [paymentStatus, setPaymentStatus] = useState("Pending");
 const [newOrderStatus, setNewOrderStatus] = useState("Pending");
 const [editingOrderId, setEditingOrderId] = useState(null);
 
+const [products, setProducts] = useState(() => {
+  const savedProducts = localStorage.getItem("orderflow_products");
+  return savedProducts ? JSON.parse(savedProducts) : [];
+});
+
+const [selectedProductId, setSelectedProductId] = useState("");
+const [quantity, setQuantity] = useState("1");
+
+const selectedProduct = products.find(
+  (product) => product.id === selectedProductId
+);
+
+const calculatedTotal = selectedProduct
+  ? selectedProduct.price * Number(quantity || 0)
+  : 0;
+
 useEffect(() => {
   localStorage.setItem("orderflow_orders", JSON.stringify(orders));
 }, [orders]);
@@ -27,17 +43,34 @@ useEffect(() => {
 
 const handleAddOrder = (event) => {
   event.preventDefault();
- const cleanCustomer = customer.trim();
-const numericTotal = Number(total);
 
-if (!cleanCustomer || !Number.isFinite(numericTotal) || numericTotal <= 0) {
-  alert("Please enter a valid customer name and a total greater than zero.");
-  return;
-}
+  const cleanCustomer = customer.trim();
+  const numericQuantity = Number(quantity);
+
+  if (!cleanCustomer || !selectedProduct) {
+    alert("Please enter a customer name and select a product.");
+    return;
+  }
+
+  if (
+    !Number.isInteger(numericQuantity) ||
+    numericQuantity <= 0 ||
+    numericQuantity > selectedProduct.stock
+  ) {
+    alert("Please enter a valid quantity within available stock.");
+    return;
+  }
+
+  const numericTotal = selectedProduct.price * numericQuantity;
+
   const newOrder = {
     id: `ORD-${String(Date.now()).slice(-6)}`,
     customer: cleanCustomer,
-total: numericTotal,
+    productId: selectedProduct.id,
+    productName: selectedProduct.name,
+    quantity: numericQuantity,
+    unitPrice: selectedProduct.price,
+    total: numericTotal,
     status: paymentStatus,
     orderStatus: newOrderStatus,
     createdAt: new Date().toISOString(),
@@ -45,12 +78,24 @@ total: numericTotal,
 
   setOrders((previousOrders) => [...previousOrders, newOrder]);
 
+  const updatedProducts = products.map((product) =>
+    product.id === selectedProduct.id
+      ? { ...product, stock: product.stock - numericQuantity }
+      : product
+  );
+
+  setProducts(updatedProducts);
+  localStorage.setItem("orderflow_products", JSON.stringify(updatedProducts));
+
   setCustomer("");
+  setSelectedProductId("");
+  setQuantity("1");
   setTotal("");
   setPaymentStatus("Pending");
   setNewOrderStatus("Pending");
   setShowOrderForm(false);
 };
+  
 
 const handleEditOrder = (order) => {
   setEditingOrderId(order.id);
@@ -196,18 +241,46 @@ const handleCancelOrder = (orderId) => {
     />
   </label>
 
+<label>
+  Product
+  <select
+    value={selectedProductId}
+    onChange={(event) => setSelectedProductId(event.target.value)}
+    required
+  >
+    <option value="">Select a product</option>
+
+    {products.map((product) => (
+      <option
+        key={product.id}
+        value={product.id}
+        disabled={product.stock === 0}
+      >
+        {product.name} — ${product.price.toFixed(2)} ({product.stock} in stock)
+      </option>
+    ))}
+  </select>
+</label>
+
+<label>
+  Quantity
+  <input
+    type="number"
+    min="1"
+    step="1"
+    value={quantity}
+    onChange={(event) => setQuantity(event.target.value)}
+    required
+  />
+</label>
   <label>
-    Total Amount ($)
-    <input
-  type="number"
-  min="0.01"
-  step="0.01"
-  placeholder="Enter total amount"
-  value={total}
-  onChange={(event) => setTotal(event.target.value)}
-  required
-/>
-  </label>
+  Total Amount ($)
+  <input
+    type="number"
+    value={calculatedTotal.toFixed(2)}
+    readOnly
+  />
+</label>
 
   <label>
     Payment Status
