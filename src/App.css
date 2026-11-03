@@ -1141,3 +1141,26 @@ body {
   color: #64748b;
   font-size: 14px;
 }
+
+.customer-stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  max-width: 350px;
+}
+
+.customer-stat-card h3 {
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.customer-stat-card p {
+  color: #0f172a;
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0;
+}

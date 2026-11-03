@@ -26,6 +26,22 @@ useEffect(() => {
   localStorage.setItem("orderflow_products", JSON.stringify(products));
 }, [products]);
 
+useEffect(() => {
+  const syncProducts = () => {
+    const savedProducts = localStorage.getItem("orderflow_products");
+
+    if (savedProducts) {
+      setProducts(JSON.parse(savedProducts));
+    }
+  };
+
+  window.addEventListener("productsUpdated", syncProducts);
+
+  return () => {
+    window.removeEventListener("productsUpdated", syncProducts);
+  };
+}, []);
+
 const totalProducts = products.length;
 
 const lowStock = products.filter(

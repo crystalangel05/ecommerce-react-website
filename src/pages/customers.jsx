@@ -39,6 +39,7 @@ const [customers, setCustomers] = useState(() => {
     : initialCustomers;
 });
 const [editingCustomerId, setEditingCustomerId] = useState(null);
+const [selectedCustomer, setSelectedCustomer] = useState(null);
 const [savedOrders, setSavedOrders] = useState(() => {
   const orders = localStorage.getItem("orderflow_orders");
   return orders ? JSON.parse(orders) : [];
@@ -71,16 +72,30 @@ const customersData = [
 
 
 const customersWithOrderCounts = customers.map((customer) => {
-  const orderCount = savedOrders.filter(
+  const customerOrders = savedOrders.filter(
     (order) =>
-      order.customer.toLowerCase() === customer.name.toLowerCase()
-  ).length;
+      order.customer.toLowerCase() === customer.name.toLowerCase() &&
+      order.orderStatus !== "Cancelled"
+  );
+
+  const orderCount = customerOrders.length;
+
+  const totalSpent = customerOrders.reduce(
+    (total, order) => total + Number(order.total),
+    0
+  );
 
   return {
     ...customer,
     orders: orderCount,
+    totalSpent: totalSpent,
   };
 });
+
+const totalCustomerRevenue = customersWithOrderCounts.reduce(
+  (total, customer) => total + customer.totalSpent,
+  0
+);
 
 
  const filteredCustomers = customersWithOrderCounts.filter((customer) => {
@@ -135,6 +150,8 @@ const handleUpdateCustomer = (event) => {
     )
   );
 
+  window.dispatchEvent(new Event("customersUpdated"));
+
   setEditingCustomerId(null);
   setCustomerName("");
   setCustomerEmail("");
@@ -165,7 +182,8 @@ const handleAddCustomer = (event) => {
   setCustomers((previousCustomers) => [
     ...previousCustomers,
     newCustomer,
-  ]);
+  ]); 
+  window.dispatchEvent(new Event("customersUpdated"));
 
   setCustomerName("");
   setCustomerEmail("");
@@ -183,7 +201,10 @@ const handleDeleteCustomer = (customerId) => {
   setCustomers((previousCustomers) =>
     previousCustomers.filter((customer) => customer.id !== customerId)
   );
+
+window.dispatchEvent(new Event("customersUpdated"));
 };
+
 
 return ( <div className="customers-page">
    <div className="customers-header"> 
@@ -195,6 +216,11 @@ return ( <div className="customers-page">
   + Add Customer
 </button>
   </div>
+
+  <div className="customer-stat-card">
+  <h3>Total Customer Revenue</h3>
+  <p>${totalCustomerRevenue.toFixed(2)}</p>
+</div>
   <div className="customers-controls">
   <input
     type="text"
@@ -256,7 +282,40 @@ return ( <div className="customers-page">
     </form>
   </div>
 )}
+{selectedCustomer && (
+  <div className="customer-order-history">
+    <h2>Orders for {selectedCustomer.name}</h2>
 
+    <button onClick={() => setSelectedCustomer(null)}>
+      Close
+    </button>
+
+    {savedOrders.filter(
+      (order) =>
+        order.customer &&
+        order.customer.toLowerCase() ===
+          selectedCustomer.name.toLowerCase()
+    ).length === 0 ? (
+      <p>No orders found for this customer.</p>
+    ) : (
+      savedOrders
+        .filter(
+          (order) =>
+            order.customer &&
+            order.customer.toLowerCase() ===
+              selectedCustomer.name.toLowerCase()
+        )
+        .map((order) => (
+          <div key={order.id}>
+            <p>Order ID: {order.id}</p>
+            <p>Product: {order.productName}</p>
+            <p>Total: ${Number(order.total).toFixed(2)}</p>
+            <p>Status: {order.orderStatus}</p>
+          </div>
+        ))
+    )}
+  </div>
+)}
   <div className="customers-table-container">
     <table className="customers-table">
       <thead>
@@ -266,6 +325,7 @@ return ( <div className="customers-page">
           <th>Email</th>
           <th>Phone</th>
           <th>Orders</th>
+          <th>Total Spent</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -279,6 +339,7 @@ return ( <div className="customers-page">
         <td>{customer.email}</td>
         <td>{customer.phone}</td>
         <td>{customer.orders}</td>
+        <td>${customer.totalSpent.toFixed(2)}</td>
         <td>
   <button
     type="button"
@@ -294,6 +355,10 @@ return ( <div className="customers-page">
 >
   Delete
 </button>
+<button onClick={() => setSelectedCustomer(customer)}>
+  View Orders
+</button>
+
 </td>
       </tr>
     ))

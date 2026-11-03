@@ -9,10 +9,14 @@ export default function Orders() {
   const [searchTerm, setSearchTerm] = useState("");
   const [paymentFilter, setPaymentFilter] = useState("All")
   const [orderStatusFilter, setOrderStatusFilter] = useState("All");
-  const [showOrderForm, setShowOrderForm] = useState(false);
+  const [showOrderForm, setShowOrderForm] = useState(false); 
 const [orders, setOrders] = useState(() => {
   const savedOrders = localStorage.getItem("orderflow_orders");
   return savedOrders ? JSON.parse(savedOrders) : ordersData;
+});
+const [customers, setCustomers] = useState(() => {
+  const savedCustomers = localStorage.getItem("orderflow_customers");
+  return savedCustomers ? JSON.parse(savedCustomers) : [];
 });
   const [customer, setCustomer] = useState("");
 const [total, setTotal] = useState("");
@@ -39,6 +43,39 @@ const calculatedTotal = selectedProduct
 useEffect(() => {
   localStorage.setItem("orderflow_orders", JSON.stringify(orders));
 }, [orders]);
+
+useEffect(() => {
+  const syncProducts = () => {
+    const savedProducts = localStorage.getItem("orderflow_products");
+
+    if (savedProducts) {
+      setProducts(JSON.parse(savedProducts));
+    }
+  };
+
+  window.addEventListener("productsUpdated", syncProducts);
+
+  return () => {
+    window.removeEventListener("productsUpdated", syncProducts);
+  };
+}, []);
+
+useEffect(() => {
+  const syncCustomers = () => {
+    const savedCustomers = localStorage.getItem("orderflow_customers");
+
+    if (savedCustomers) {
+      setCustomers(JSON.parse(savedCustomers));
+    }
+  };
+
+  window.addEventListener("customersUpdated", syncCustomers);
+
+  return () => {
+    window.removeEventListener("customersUpdated", syncCustomers);
+  };
+}, []);
+
 
 
 const handleAddOrder = (event) => {
@@ -86,7 +123,7 @@ const handleAddOrder = (event) => {
 
   setProducts(updatedProducts);
   localStorage.setItem("orderflow_products", JSON.stringify(updatedProducts));
-
+window.dispatchEvent(new Event("productsUpdated"));
   setCustomer("");
   setSelectedProductId("");
   setQuantity("1");
@@ -144,14 +181,42 @@ const handleUpdateOrder = (event) => {
 };
 
 const handleCancelOrder = (orderId) => {
+  const orderToCancel = orders.find(
+    (order) => order.id === orderId
+  );
+
+  if (!orderToCancel || orderToCancel.orderStatus === "Cancelled") {
+    return;
+  }
+
   const confirmed = window.confirm(
     "Are you sure you want to cancel this order?"
   );
 
-  if (!confirmed) {
-    return;
+  if (!confirmed) return;
+
+
+  if (orderToCancel.productId) {
+    const updatedProducts = products.map((product) =>
+      product.id === orderToCancel.productId
+        ? {
+            ...product,
+            stock: product.stock + orderToCancel.quantity,
+          }
+        : product
+    );
+
+    setProducts(updatedProducts);
+
+    localStorage.setItem(
+      "orderflow_products",
+      JSON.stringify(updatedProducts)
+    );
+
+    window.dispatchEvent(new Event("productsUpdated"));
   }
 
+  
   setOrders((previousOrders) =>
     previousOrders.map((order) =>
       order.id === orderId
@@ -206,7 +271,7 @@ const handleCancelOrder = (orderId) => {
   <option value="Pending">Pending</option>
   <option value="Processing">Processing</option>
   <option value="Completed">Completed</option>
-  <option value="Cancelled">Cancelled</option>
+  
 </select>
       </div>
 
@@ -232,13 +297,19 @@ const handleCancelOrder = (orderId) => {
 <form className="order-form" onSubmit={editingOrderId ? handleUpdateOrder : handleAddOrder}>
   <label>
     Customer Name
-    <input
-      type="text"
-      placeholder="Enter customer name"
-      value={customer}
+    <select
+  value={customer}
   onChange={(event) => setCustomer(event.target.value)}
-      required
-    />
+  required
+>
+  <option value="">Select a customer</option>
+
+  {customers.map((customer) => (
+    <option key={customer.id} value={customer.name}>
+      {customer.name}
+    </option>
+  ))}
+</select>
   </label>
 
 <label>
@@ -276,10 +347,14 @@ const handleCancelOrder = (orderId) => {
   <label>
   Total Amount ($)
   <input
-    type="number"
-    value={calculatedTotal.toFixed(2)}
-    readOnly
-  />
+  type="number"
+  value={
+    editingOrderId
+      ? orders.find((order) => order.id === editingOrderId)?.total.toFixed(2) || "0.00"
+      : calculatedTotal.toFixed(2)
+  }
+  readOnly
+/>
 </label>
 
   <label>
