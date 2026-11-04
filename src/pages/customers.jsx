@@ -468,24 +468,31 @@ return ( <div className="customers-page">
     {customer.loyaltyStatus}
   </span> </td>
         <td>
-  <button
-    type="button"
-    className="edit-customer-button"
-    onClick={() => handleEditCustomer(customer)}
-  >
-    Edit
-  </button>
-  <button
-  type="button"
-  className="delete-customer-button"
-  onClick={() => handleDeleteCustomer(customer.id)}
->
-  Delete
-</button>
-<button onClick={() => setSelectedCustomer(customer)}>
-  View Orders
-</button>
+  <div className="customer-actions">
+    <button
+      type="button"
+      className="edit-customer-button"
+      onClick={() => handleEditCustomer(customer)}
+    >
+      Edit
+    </button>
 
+    <button
+      type="button"
+      className="delete-customer-button"
+      onClick={() => handleDeleteCustomer(customer.id)}
+    >
+      Delete
+    </button>
+
+    <button
+      type="button"
+      className="view-orders-button"
+      onClick={() => setSelectedCustomer(customer)}
+    >
+      View Orders
+    </button>
+  </div>
 </td>
       </tr>
     ))

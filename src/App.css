@@ -1339,3 +1339,187 @@ body {
   background: #fef3c7;
   color: #92400e;
 }
+
+.top-customers-card {
+  background: #fffeFB ;
+  border: 1px solid #e9dfd2 ;
+  border-radius: 18px ;
+  padding: 28px ;
+  margin-bottom: 28px;
+  max-width: 540px;
+  box-shadow: 0 8px 24px rgba(53, 37, 31, 0.08);
+}
+
+.top-customers-card h2 {
+  color: #35251f !important;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 24px;
+}
+
+.top-customer-item {
+  border-bottom: 1px solid #eee7df;
+  transition: padding 0.2s ease;
+}
+
+.top-customer-item:hover {
+  padding-left: 8px;
+}
+
+.top-customer-item strong {
+  color: #35251f;
+  font-size: 15px;
+}
+
+.top-customer-item p {
+  color: #99877b;
+  font-size: 13px;
+}
+
+/* ORDERFLOW LOYALTY BADGES */
+
+.loyalty-badge {
+  display: inline-block;
+  padding: 7px 13px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.loyalty-badge.new-customer {
+  background: #f1eee9;
+  color: #75665b;
+}
+
+.loyalty-badge.returning-customer {
+  background: #f5e5d9;
+  color: #a65e3f;
+}
+
+.loyalty-badge.loyal-customer {
+  background: #e9dfd2;
+  color: #654332;
+}
+
+.top-customers-card h2 {
+  color: #35251f;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 24px;
+}
+
+.top-customer-item {
+  padding: 20px 0;
+  border-bottom: 1px solid #eee7df;
+  transition: padding 0.2s ease;
+}
+
+.top-customer-item:hover {
+  padding-left: 8px;
+}
+
+.top-customer-item strong {
+  color: #35251f;
+  font-size: 15px;
+}
+
+.top-customer-item p {
+  color: #99877b;
+  font-size: 13px;
+}
+
+/* CUSTOMER ACTION BUTTONS */
+
+.customer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.customer-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.edit-customer-button {
+  background: #f5e5d9;
+  color: #a65e3f;
+}
+
+.edit-customer-button:hover {
+  background: #ecd2c1;
+}
+
+.delete-customer-button {
+  background: #f9e5e2;
+  color: #b94b40;
+}
+
+.delete-customer-button:hover {
+  background: #f2d1cc;
+}
+
+.view-orders-button {
+  background: #35251f;
+  color: #fffeFB;
+}
+
+.view-orders-button:hover {
+  background: #654332;
+}
+
+.customer-actions button:hover {
+  transform: translateY(-1px);
+}
+
+/* CUSTOMER FILTERS AND SEARCH */
+
+.customers-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.customers-controls select,
+.customers-controls input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #e9dfd2;
+  border-radius: 9px;
+  background: #fffeFB;
+  color: #35251f;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.customers-controls select {
+  min-width: 180px;
+  cursor: pointer;
+}
+
+.customers-controls input {
+  min-width: 220px;
+}
+
+.customers-controls select:focus,
+.customers-controls input:focus {
+  border-color: #b76e52;
+  box-shadow: 0 0 0 3px rgba(183, 110, 82, 0.12);
+}
+
+.customers-controls input::placeholder {
+  color: #a99a8e;
+}
