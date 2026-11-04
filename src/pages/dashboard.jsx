@@ -95,7 +95,7 @@ const revenueData = orders.reduce((months, order) => {
 
       <Bar
         dataKey="revenue"
-        fill="#2563eb"
+        fill="#B76E52"
         radius={[6, 6, 0, 0]}
       />
     </BarChart>

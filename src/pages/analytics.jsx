@@ -118,7 +118,13 @@ const chartColors = ["#f59e0b", "#3b82f6", "#10b981", "#ef4444"];
         </div>
 
 
-        <div className="analytics-chart-card">
+        
+      </div>
+
+      <div className="analytics-chart-card">
+  <h2>Monthly Revenue</h2>
+
+  <div className="analytics-chart-card">
   <h2>Order Status Breakdown</h2>
 
   <ResponsiveContainer width="100%" height={320}>
@@ -145,10 +151,6 @@ const chartColors = ["#f59e0b", "#3b82f6", "#10b981", "#ef4444"];
     </PieChart>
   </ResponsiveContainer>
 </div>
-      </div>
-
-      <div className="analytics-chart-card">
-  <h2>Monthly Revenue</h2>
 
   {monthlyRevenue.length === 0 ? (
     <p>No dated orders available yet.</p>
@@ -159,7 +161,7 @@ const chartColors = ["#f59e0b", "#3b82f6", "#10b981", "#ef4444"];
         <XAxis dataKey="month" />
         <YAxis />
         <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
-        <Bar dataKey="revenue" fill="#2563eb" radius={[6, 6, 0, 0]} />
+        <Bar dataKey="revenue" fill="#B76E52" radius={[6, 6, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )}

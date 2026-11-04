@@ -21,51 +21,78 @@ body {
 
 
 .sidebar-container {
+  box-sizing: border-box;
   width: 240px;
-  min-height: 100vh;
-  padding: 24px 16px;
-  background-color: #ffffff;
-  border-right: 1px solid #e5e7eb;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 30px 18px;
+  background-color: #f8f5f0;
+  border-right: 1px solid #e9dfd2;
+  overflow-y: auto;
+  z-index: 1000;
 }
 
 .logo {
   padding: 0 12px;
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
 
 .logo h1 {
   margin: 0;
-  font-size: 20px;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: #35251f;
 }
 
+.logo h1::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 9px;
+  background: #b76e52;
+  border-radius: 3px;
+}
 
 
 .sidebar-content {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .sidebar-link {
   display: block;
-  padding: 10px 12px;
-  border-radius: 8px;
-
-  color: #555;
+  padding: 13px 14px;
+  border-radius: 10px;
+  color: #75665b;
+  font-size: 15px;
+  font-weight: 500;
   text-decoration: none;
-
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .sidebar-link:hover {
-  background-color: #f1f3f5;
+  background-color: #eee5da;
+  color: #35251f;
 }
 
+.sidebar-link.active {
+  background-color: #ead8c9;
+  color: #8f5038;
+  font-weight: 700;
+  border-left: 3px solid #b76e52;
+}
 
 
 .dashboard-main {
   flex: 1;
   min-width: 0;
+  margin-left: 240px;
+  min-height: 100vh;
 }
 
 
@@ -167,14 +194,15 @@ body {
 .dashboard-card {
   min-width: 0;
   padding: 24px;
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  background-color: #fffeFB;
+  border: 1px solid #e9dfd2;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(53, 37, 31, 0.05);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .dashboard-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 25px rgba(53, 37, 31, 0.08);
   transform: translateY(-2px);
 }
 
