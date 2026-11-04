@@ -28,6 +28,8 @@ const initialCustomers = [
 export default function Customers() {
 
 const [searchTerm, setSearchTerm] = useState("");
+const [loyaltyFilter, setLoyaltyFilter] = useState("All");
+const [sortOption, setSortOption] = useState("name");
 const [showCustomerForm, setShowCustomerForm] = useState(false);
 const [customerName, setCustomerName] = useState("");
 const [customerEmail, setCustomerEmail] = useState("");
@@ -85,28 +87,64 @@ const customersWithOrderCounts = customers.map((customer) => {
     0
   );
 
-  return {
-    ...customer,
-    orders: orderCount,
-    totalSpent: totalSpent,
-  };
-});
+
+  const loyaltyStatus =
+  orderCount >= 5
+    ? "Loyal Customer"
+    : orderCount >= 2
+    ? "Returning Customer"
+    : "New Customer";
+
+return {
+  ...customer,
+  orders: orderCount,
+  totalSpent: totalSpent,
+  loyaltyStatus: loyaltyStatus,
+}; });
+
+
 
 const totalCustomerRevenue = customersWithOrderCounts.reduce(
   (total, customer) => total + customer.totalSpent,
   0
 );
 
+const topCustomers = [...customersWithOrderCounts]
+  .filter((customer) => customer.totalSpent > 0)
+  .sort((a, b) => b.totalSpent - a.totalSpent)
+  .slice(0, 5);
 
- const filteredCustomers = customersWithOrderCounts.filter((customer) => {
+const filteredCustomers = customersWithOrderCounts.filter((customer) => {
   const search = searchTerm.toLowerCase();
 
-  return (
+  const matchesSearch =
     customer.name.toLowerCase().includes(search) ||
     customer.email.toLowerCase().includes(search) ||
-    customer.phone.includes(search)
-  );
+    customer.phone.includes(search);
+
+  const matchesLoyalty =
+    loyaltyFilter === "All" ||
+    customer.loyaltyStatus === loyaltyFilter;
+
+  return matchesSearch && matchesLoyalty;
 });
+
+const sortedCustomers = [...filteredCustomers].sort((a, b) => {
+  if (sortOption === "name") {
+    return a.name.localeCompare(b.name);
+  }
+
+  if (sortOption === "spent") {
+    return b.totalSpent - a.totalSpent;
+  }
+
+  if (sortOption === "orders") {
+    return b.orders - a.orders;
+  }
+
+  return 0;
+});
+
 
 useEffect(() => {
   localStorage.setItem("orderflow_customers", JSON.stringify(customers));
@@ -221,7 +259,40 @@ return ( <div className="customers-page">
   <h3>Total Customer Revenue</h3>
   <p>${totalCustomerRevenue.toFixed(2)}</p>
 </div>
+<div className="top-customers-card">
+  <h2>Top Customers</h2>
+  {topCustomers.length > 0 ? (
+    topCustomers.map((customer, index) => (
+      <div className="top-customer-item" key={customer.id}>
+        <div>
+          <strong>#{index + 1} {customer.name}</strong>
+          <p>{customer.orders} orders</p>
+        </div>
+        <strong>${customer.totalSpent.toFixed(2)}</strong>
+      </div>
+    ))
+  ) : (
+    <p>No customer spending data available yet.</p>
+  )}
+</div>
   <div className="customers-controls">
+    <select
+  value={loyaltyFilter}
+  onChange={(event) => setLoyaltyFilter(event.target.value)}
+>
+  <option value="All">All Customers</option>
+  <option value="New Customer">New Customers</option>
+  <option value="Returning Customer">Returning Customers</option>
+  <option value="Loyal Customer">Loyal Customers</option>
+</select>
+<select
+  value={sortOption}
+  onChange={(event) => setSortOption(event.target.value)}
+>
+  <option value="name">Name (A–Z)</option>
+  <option value="spent">Highest Spending</option>
+  <option value="orders">Most Orders</option>
+</select>
   <input
     type="text"
     placeholder="Search by name, email, or phone..."
@@ -284,6 +355,39 @@ return ( <div className="customers-page">
 )}
 {selectedCustomer && (
   <div className="customer-order-history">
+    {(() => {
+  const customerOrders = savedOrders.filter(
+    (order) =>
+      order.customer?.toLowerCase() ===
+        selectedCustomer.name.toLowerCase() &&
+      order.orderStatus !== "Cancelled"
+  );
+
+  const totalSpent = customerOrders.reduce(
+    (total, order) => total + Number(order.total || 0),
+    0
+  );
+
+  const lastOrder = customerOrders
+    .filter((order) => order.createdAt)
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt) - new Date(a.createdAt)
+    )[0];
+
+  return (
+    <div className="customer-profile-summary">
+      <p>Total Orders: {customerOrders.length}</p>
+      <p>Total Spent: ${totalSpent.toFixed(2)}</p>
+      <p>
+        Last Order:{" "}
+        {lastOrder
+          ? new Date(lastOrder.createdAt).toLocaleDateString()
+          : "No orders yet"}
+      </p>
+    </div>
+  );
+})()}
     <h2>Orders for {selectedCustomer.name}</h2>
 
     <button onClick={() => setSelectedCustomer(null)}>
@@ -308,9 +412,28 @@ return ( <div className="customers-page">
         .map((order) => (
           <div key={order.id}>
             <p>Order ID: {order.id}</p>
-            <p>Product: {order.productName}</p>
-            <p>Total: ${Number(order.total).toFixed(2)}</p>
-            <p>Status: {order.orderStatus}</p>
+<p>Product: {order.productName}</p>
+
+<p>
+  Order Date:{" "}
+  {order.createdAt
+    ? new Date(order.createdAt).toLocaleDateString()
+    : "Date unavailable"}
+</p>
+
+<p>Total: ${Number(order.total).toFixed(2)}</p>
+<p>
+  Status:{" "}
+  <span className={`order-status-badge ${order.orderStatus.toLowerCase()}`}>
+    {order.orderStatus}
+  </span>
+</p>
+<p>
+  Payment:{" "}
+  <span className={`payment-status-badge ${(order.paymentStatus || "pending").toLowerCase().replace(/\s+/g, "-")}`}>
+    {order.paymentStatus || "Pending"}
+  </span>
+</p>
           </div>
         ))
     )}
@@ -326,13 +449,14 @@ return ( <div className="customers-page">
           <th>Phone</th>
           <th>Orders</th>
           <th>Total Spent</th>
+          <th>Loyalty Status</th>
           <th>Actions</th>
         </tr>
       </thead>
 
       <tbody>
   {filteredCustomers.length > 0 ? (
-    filteredCustomers.map((customer) => (
+   sortedCustomers.map((customer) => (
       <tr key={customer.id}>
         <td>{customer.id}</td>
         <td>{customer.name}</td>
@@ -340,6 +464,9 @@ return ( <div className="customers-page">
         <td>{customer.phone}</td>
         <td>{customer.orders}</td>
         <td>${customer.totalSpent.toFixed(2)}</td>
+        <td> <span className={`loyalty-badge ${customer.loyaltyStatus.toLowerCase().replace(/\s+/g, "-")}`}>
+    {customer.loyaltyStatus}
+  </span> </td>
         <td>
   <button
     type="button"
@@ -364,7 +491,7 @@ return ( <div className="customers-page">
     ))
   ) : (
     <tr>
-      <td colSpan="6" className="no-orders">
+      <td colSpan="7" className="no-orders">
         No customers found. Try another search.
       </td>
     </tr>

@@ -22,6 +22,7 @@ const [customers, setCustomers] = useState(() => {
 const [total, setTotal] = useState("");
 const [paymentStatus, setPaymentStatus] = useState("Pending");
 const [newOrderStatus, setNewOrderStatus] = useState("Pending");
+const [amountPaid, setAmountPaid] = useState("");
 const [editingOrderId, setEditingOrderId] = useState(null);
 
 const [products, setProducts] = useState(() => {
@@ -100,6 +101,24 @@ const handleAddOrder = (event) => {
 
   const numericTotal = selectedProduct.price * numericQuantity;
 
+  const numericAmountPaid = Number(amountPaid || 0);
+
+  const calculatedPaymentStatus =
+  numericAmountPaid === 0
+    ? "Pending"
+    : numericAmountPaid < numericTotal
+    ? "Partially Paid"
+    : "Paid";
+
+if (
+  !Number.isFinite(numericAmountPaid) ||
+  numericAmountPaid < 0 ||
+  numericAmountPaid > numericTotal
+) {
+  alert("Amount paid must be between $0 and the order total.");
+  return;
+}
+
   const newOrder = {
     id: `ORD-${String(Date.now()).slice(-6)}`,
     customer: cleanCustomer,
@@ -108,7 +127,9 @@ const handleAddOrder = (event) => {
     quantity: numericQuantity,
     unitPrice: selectedProduct.price,
     total: numericTotal,
-    status: paymentStatus,
+    amountPaid: numericAmountPaid,
+balance: numericTotal - numericAmountPaid,
+status: calculatedPaymentStatus,
     orderStatus: newOrderStatus,
     createdAt: new Date().toISOString(),
   };
@@ -128,6 +149,7 @@ window.dispatchEvent(new Event("productsUpdated"));
   setSelectedProductId("");
   setQuantity("1");
   setTotal("");
+  setAmountPaid("");
   setPaymentStatus("Pending");
   setNewOrderStatus("Pending");
   setShowOrderForm(false);
@@ -139,6 +161,7 @@ const handleEditOrder = (order) => {
   setCustomer(order.customer);
   setTotal(String(order.total));
   setPaymentStatus(order.status);
+  setAmountPaid(String(order.amountPaid ?? 0));
   setNewOrderStatus(order.orderStatus);
   setShowOrderForm(true);
 };
@@ -148,6 +171,23 @@ const handleUpdateOrder = (event) => {
 
   const cleanCustomer = customer.trim();
   const numericTotal = Number(total);
+  const numericAmountPaid = Number(amountPaid || 0);
+
+if (
+  !Number.isFinite(numericAmountPaid) ||
+  numericAmountPaid < 0 ||
+  numericAmountPaid > numericTotal
+) {
+  alert("Amount paid must be between $0 and the order total.");
+  return;
+}
+
+const calculatedPaymentStatus =
+  numericAmountPaid === 0
+    ? "Pending"
+    : numericAmountPaid < numericTotal
+    ? "Partially Paid"
+    : "Paid";
 
   if (
     !cleanCustomer ||
@@ -162,12 +202,14 @@ const handleUpdateOrder = (event) => {
     previousOrders.map((order) =>
       order.id === editingOrderId
         ? {
-            ...order,
-            customer: cleanCustomer,
-            total: numericTotal,
-            status: paymentStatus,
-            orderStatus: newOrderStatus,
-          }
+  ...order,
+  customer: cleanCustomer,
+  total: numericTotal,
+  amountPaid: numericAmountPaid,
+  balance: numericTotal - numericAmountPaid,
+  status: calculatedPaymentStatus,
+  orderStatus: newOrderStatus,
+}
         : order
     )
   );
@@ -175,6 +217,7 @@ const handleUpdateOrder = (event) => {
   setEditingOrderId(null);
   setCustomer("");
   setTotal("");
+  setAmountPaid("");
   setPaymentStatus("Pending");
   setNewOrderStatus("Pending");
   setShowOrderForm(false);
@@ -353,21 +396,21 @@ const handleCancelOrder = (orderId) => {
       ? orders.find((order) => order.id === editingOrderId)?.total.toFixed(2) || "0.00"
       : calculatedTotal.toFixed(2)
   }
-  readOnly
-/>
+  readOnly/>
+</label>
+<label>
+  Amount Paid ($)
+  <input
+    type="number"
+    min="0"
+    step="0.01"
+    value={amountPaid}
+    onChange={(event) => setAmountPaid(event.target.value)}
+    required
+  />
 </label>
 
-  <label>
-    Payment Status
-    <select
-  value={paymentStatus}
-  onChange={(event) => setPaymentStatus(event.target.value)}
->
-  <option value="Pending">Pending</option>
-  <option value="Paid">Paid</option>
-  <option value="Partially Paid">Partially Paid</option>
-</select>
-  </label>
+  
 
   <label>
     Order Status

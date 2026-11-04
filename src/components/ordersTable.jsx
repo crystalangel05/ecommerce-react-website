@@ -13,12 +13,11 @@ export default function OrdersTable({ orders = [], title = "Orders", onEditOrder
       <table className="orders-table">
        <thead>
   <tr>
-    <th>Order ID</th>
-    <th>Customer</th>
-    <th>Total</th>
-    <th>Payment Status</th>
-    <th>Order Status</th>
-    <th>Actions</th>
+  <th>Customer</th>
+<th>Total</th>
+<th>Amount Paid</th>
+<th>Balance Due</th>
+<th>Payment Status</th>
   </tr>
 </thead>
         <tbody>
@@ -28,6 +27,8 @@ export default function OrdersTable({ orders = [], title = "Orders", onEditOrder
         <td>{order.id}</td>
         <td>{order.customer}</td>
         <td>${order.total}</td>
+        <td>${(order.amountPaid ?? 0).toFixed(2)}</td>
+<td>${(order.balance ?? order.total).toFixed(2)}</td>
         <td>
           <span
             className={`order-status status-${order.status
@@ -68,7 +69,7 @@ export default function OrdersTable({ orders = [], title = "Orders", onEditOrder
     ))
   ) : (
     <tr>
-      <td colSpan="6" className="no-orders">
+      <td colSpan="8" className="no-orders">
         <strong>No orders found</strong>
         <p>Try changing your search or filters.</p>
       </td>
